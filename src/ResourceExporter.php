@@ -2,18 +2,7 @@
 
 namespace thiagovictorino\ResourceExporter;
 
-
-use Illuminate\Support\ServiceProvider;
-
-class ResourceExporterServiceProvider extends ServiceProvider
+class ResourceExporter
 {
-    public function boot()
-    {
-        
-    }
 
-    public function register()
-    {
-        
-    }
 }
