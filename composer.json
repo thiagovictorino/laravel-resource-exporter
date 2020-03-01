@@ -1,0 +1,37 @@
+{
+    "name": "thiagovictorino/laravel-resource-exporter",
+    "description": "A ServiceProvider that helps you to export a data resource from an api that returns a standards Laravel pagination",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Thiago Victorino",
+            "email": "eu@thiagovictorino.com"
+        }
+    ],
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.1",
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^4.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "thiagovictorino\\ResourceExporter\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "thiagovictorino\\ResourceExporter\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "thiagovictorino\\ResourceExporter\\ResourceExporterServiceProvider"
+            ]
+        }
+    }
+}
