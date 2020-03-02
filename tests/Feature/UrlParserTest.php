@@ -119,8 +119,8 @@ class UrlParserTest extends TestCase
 
         $urlParser = resolve(UrlParser::class);
 
-        $result = $urlParser->endpoint('http://localhost:8082/test?sort=-id&filter[bookable_type]=properties')
-          ->load();
+      $result = $urlParser->endpoint('http://localhost:8082/test?sort=-id&filter[bookable_type]=properties')
+        ->load();
 
         $this->assertCount(2, $result);
 

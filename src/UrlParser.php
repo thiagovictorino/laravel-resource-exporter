@@ -9,167 +9,253 @@ use Illuminate\Http\Request;
 use thiagovictorino\ResourceExporter\Exceptions\UrlParserException;
 use function GuzzleHttp\Psr7\str;
 
+/**
+ * Class UrlParser
+ * @package thiagovictorino\ResourceExporter
+ */
 class UrlParser
 {
-    protected $url;
+  /**
+   * The endpoint of where the data will be get
+   * @var $url string
+   */
+  protected $url;
 
-    protected $bearerToken;
+  /**
+   * @var $bearerToken string?
+   */
+  protected $bearerToken;
 
-    protected $httpClient;
+  /**
+   * @var $httpClient Client
+   */
+  protected $httpClient;
 
-    protected $delay = 0;
+  /**
+   * @var int
+   */
+  protected $delay = 0;
 
-    protected $bootstrapThree = false;
+  /**
+   * @var bool
+   */
+  protected $bootstrapThree = false;
 
-    protected $request;
+  /**
+   * @var Request
+   */
+  protected $request;
 
-    protected $result;
+  /**
+   * @var \Illuminate\Support\Collection
+   */
+  protected $result;
 
-    public function __construct()
-    {
-        $this->httpClient = resolve(Client::class);
-        $this->result = collect();
+  /**
+   * UrlParser constructor.
+   */
+  public function __construct()
+  {
+    $this->httpClient = resolve(Client::class);
+    $this->result = collect();
+  }
+
+  /**
+   * @param string $url
+   * @return UrlParser
+   * @throws UrlParserException
+   */
+  public function endpoint(string $url): UrlParser
+  {
+
+    if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+      throw new UrlParserException('The url ' . $url . ' is invalid');
     }
 
-    public function endpoint(string $url): UrlParser
-    {
+    $this->url = $url;
 
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            throw new UrlParserException('The url '.$url.' is invalid');
-        }
+    $this->createRequest();
 
-        $this->url = $url;
+    return $this;
+  }
 
-        $this->createRequest();
+  /**
+   * Create the request with the URL provided
+   * It is used on loop thru the pages
+   */
+  protected function createRequest()
+  {
+    $url_components = parse_url($this->url);
+    parse_str($url_components['query'], $query);
+    $this->request = Request::create($this->url, 'GET', $query);
+  }
 
-        return $this;
-    }
+  /**
+   * Set the bearear token on request
+   * @param string $token
+   * @return UrlParser
+   */
+  public function withBearerToken(string $token): UrlParser
+  {
 
-    protected function createRequest()
-    {
-        $url_components = parse_url($this->url);
-        parse_str($url_components['query'], $query);
-        $this->request = Request::create($this->url, 'GET', $query);
-    }
+    $this->bearerToken = $token;
 
-    public function withBearerToken(string $token): UrlParser
-    {
+    return $this;
+  }
 
-        $this->bearerToken = $token;
+  /**
+   * Set the content as a bootstrap 3 standard
+   * @return UrlParser
+   */
+  public function withBootstrapThree(): UrlParser
+  {
+    $this->bootstrapThree = true;
+    return $this;
+  }
 
-        return $this;
-    }
+  /**
+   * Set a delay between each page request
+   * @param int $seconds
+   * @return UrlParser
+   */
+  public function withDelay(int $seconds): UrlParser
+  {
+    $this->delay = $seconds;
+    return $this;
+  }
 
-    public function withBootstrapThree(): UrlParser
-    {
-        $this->bootstrapThree = true;
-        return $this;
-    }
+  /**
+   * Makes the request itself and create the results
+   * @return iterable
+   * @throws UrlParserException
+   */
+  public function load(): iterable
+  {
 
-    public function withDelay(int $seconds): UrlParser
-    {
-        $this->delay = $seconds;
-        return $this;
-    }
+    $this->validateBeforeLoad();
 
-    public function load(): iterable
-    {
+    $this->sendRequest();
 
-        $this->validateBeforeLoad();
+    return $this->result;
+  }
 
+  /**
+   * Send the request to the endpoint
+   * @throws UrlParserException
+   */
+  protected function sendRequest()
+  {
+    try {
+
+      $response = $this->httpClient->request('GET', $this->url, [
+        'headers' => $this->setHeaders()
+      ]);
+
+      $next_url = $this->setResult($response->getBody()->getContents());
+
+      if (!empty($next_url)) {
+        $this->url = $next_url;
+        sleep($this->delay);
         $this->sendRequest();
+      }
 
-        return $this->result;
-    }
+    } catch (RequestException $e) {
 
-    protected function sendRequest()
-    {
-        try {
+      if ($e->hasResponse()) {
+        throw new UrlParserException($e->getMessage() . ' - Response:' . str($e->getResponse()), $e->getCode(), $e);
+      }
 
-            $response = $this->httpClient->request('GET', $this->url, [
-              'headers' => $this->setHeaders()
-            ]);
+      throw new UrlParserException($e->getMessage() . ' - Request:' . str($e->getRequest()), $e->getCode(), $e);
 
-            $next_url = $this->setResult($response->getBody()->getContents());
+    } catch (\Exception $e) {
 
-            if(!empty($next_url)){
-                $this->url = $next_url;
-                sleep($this->delay);
-                $this->sendRequest();
-            }
-
-        } catch (RequestException $e) {
-
-            if ($e->hasResponse()) {
-                throw new UrlParserException($e->getMessage().' - Response:'.str($e->getResponse()),$e->getCode(), $e);
-            }
-
-            throw new UrlParserException($e->getMessage().' - Request:'.str($e->getRequest()),$e->getCode(), $e);
-
-        } catch (\Exception $e) {
-
-            throw new UrlParserException($e->getMessage(),$e->getCode(), $e);
-
-        }
+      throw new UrlParserException($e->getMessage(), $e->getCode(), $e);
 
     }
 
-    protected function setHeaders()
-    {
-        return array_merge(
-          [
-            'Accept' => 'application/json'
-          ],
-          $this->setAuthHeaders()
-        );
+  }
+
+  /**
+   * Define the header to be added on request
+   * @return array
+   */
+  protected function setHeaders()
+  {
+    return array_merge(
+      [
+        'Accept' => 'application/json'
+      ],
+      $this->setAuthHeaders()
+    );
+  }
+
+  /**
+   * Define the header if an authentication is needed
+   * @return array
+   */
+  protected function setAuthHeaders(): array
+  {
+
+    if (!empty($this->bearerToken)) {
+      return ['Authorization' => 'Bearer ' . $this->bearerToken];
     }
 
-    protected function setAuthHeaders(): array
-    {
+    return [];
+  }
 
-        if(!empty($this->bearerToken)){
-            return ['Authorization' => 'Bearer ' . $this->bearerToken];
-        }
+  /**
+   * Validate things before request
+   * @throws UrlParserException
+   */
+  private function validateBeforeLoad()
+  {
+    if (empty($this->url)) {
+      throw new UrlParserException('You must inform an URL at least before call load()');
+    }
+  }
 
-        return [];
+  /**
+   * Handle the response from the request
+   * @param string $contents
+   * @return string|null
+   * @throws UrlParserException
+   */
+  private function setResult(string $contents): ?string
+  {
+    $json = json_decode($contents);
+
+    if ($this->bootstrapThree) {
+      return $this->parseBootstrapThreeResult($json);
     }
 
-    private function validateBeforeLoad()
-    {
-        if (empty($this->url)) {
-            throw new UrlParserException('You must inform an URL at least before call load()');
-        }
+    $this->result->push($json->data);
+
+    if (empty($json->next_page_url)) {
+      return '';
     }
 
-    private function setResult(string $contents) : ?string
-    {
-        $json = json_decode($contents);
+    return $json->next_page_url . '&' . urldecode(http_build_query($this->request->except('page')));
+  }
 
-        if($this->bootstrapThree){
-            return $this->parseBootstrapThreeResult($json);
-        }
+  /**
+   * Handle the result from request when it is a
+   * bootstrap 3 content
+   * @param $json
+   * @return string
+   * @throws UrlParserException
+   */
+  private function parseBootstrapThreeResult($json)
+  {
 
-        $this->result->push($json->data);
+    if (!isset($json->meta)) {
+      throw new UrlParserException('This is not a Bootstrap 3 format');
+    }
+    $this->result->push($json->data);
 
-        if(empty($json->next_page_url)) {
-            return '';
-        }
-
-        return $json->next_page_url.'&'.urldecode(http_build_query($this->request->except('page')));
+    if (empty($json->meta->pagination->links->next)) {
+      return '';
     }
 
-    private function parseBootstrapThreeResult($json)
-    {
-
-        if (!isset($json->meta)) {
-           throw new UrlParserException('This is not a Bootstrap 3 format');
-        }
-        $this->result->push($json->data);
-
-        if(empty($json->meta->pagination->links->next)) {
-            return '';
-        }
-
-        return $json->meta->pagination->links->next.'&'.urldecode(http_build_query($this->request->except('page')));
-    }
+    return $json->meta->pagination->links->next . '&' . urldecode(http_build_query($this->request->except('page')));
+  }
 }

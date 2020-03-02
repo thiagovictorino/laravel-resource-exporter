@@ -2,7 +2,104 @@
 
 namespace thiagovictorino\ResourceExporter;
 
+
+use Illuminate\Support\Facades\Storage;
+use thiagovictorino\ResourceExporter\Exporters\CommaSeparatedValues;
+
+/**
+ * Class ResourceExporter
+ * @package thiagovictorino\ResourceExporter
+ */
 class ResourceExporter
 {
+  /**
+   * @var UrlParser
+   */
+  protected $urlParser;
 
+  /**
+   * @var mixed
+   */
+  protected $fileContent;
+
+  /**
+   * ResourceExporter constructor.
+   */
+  public function __construct()
+  {
+    $this->urlParser = resolve(UrlParser::class);
+  }
+
+  /**
+   * Set the endpoint where the data will be get
+   * @param string $url
+   * @return ResourceExporter
+   * @throws Exceptions\UrlParserException
+   */
+  public function endpoint(string $url): ResourceExporter
+  {
+    $this->urlParser = $this->urlParser->endpoint($url);
+    return $this;
+  }
+
+  /**
+   * Set the bearer token as a header to request
+   * @param string $token
+   * @return ResourceExporter
+   */
+  public function withBearerToken(string $token): ResourceExporter
+  {
+    $this->urlParser = $this->urlParser->withBearerToken($token);
+    return $this;
+  }
+
+  /**
+   * Add a delay between each page request in seconds
+   * @param int $seconds
+   * @return ResourceExporter
+   */
+  public function withDelay(int $seconds): ResourceExporter
+  {
+    $this->urlParser = $this->withDelay($seconds);
+    return $this;
+  }
+
+  /**
+   * Consider the content of request as a bootstrap 3 standard
+   * @return $this
+   */
+  public function withBootstrapThree()
+  {
+    $this->urlParser = $this->withBootstrapThree();
+    return $this;
+  }
+
+  /**
+   * Export to CSV and save in file
+   * @return string Name of the file saved
+   */
+  public function toCSV()
+  {
+    $result = $this->urlParser->load();
+    /**
+     * @var $exporter CommaSeparatedValues
+     */
+    $exporter = resolve(CommaSeparatedValues::class);
+
+    $this->fileContent = $exporter->export($result);
+    $fileName = $this->generateRandomName() . '.csv';
+    Storage::put(
+      $fileName,
+      $this->fileContent);
+    return $fileName;
+  }
+
+  /**
+   * Generate a random name to file
+   * @return string
+   */
+  protected function generateRandomName(): string
+  {
+    return md5(uniqid(rand(), true));
+  }
 }
