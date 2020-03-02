@@ -41,6 +41,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
           'driver' => 'sqlite',
           'database' => ':memory:'
         ]);
+        $app['config']->set("filesystems.disks");
+      $app['config']->set("filesystems.disks.local",[
+        'driver' => 'local',
+        'root' => storage_path('path'),
+      ]);
     }
 
     protected function setUpDataBase(){
