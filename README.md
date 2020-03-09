@@ -4,7 +4,7 @@
 /**
  * Getting the export builder 
  */
-$exporter = \thiagovictorino\ResourceExporter\ResourceExporter::endpoint('http://you-url.com?anyfilters');
+$exporter = \thiagovictorino\ResourceExporter\ResourceExporter::endpoint('http://your-url.com?anyfilters');
 
 /**
  * optional: Set the Bearer Token on request
