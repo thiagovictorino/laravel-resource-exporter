@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use thiagovictorino\ResourceExporter\Exporters\CommaSeparatedValues;
 use thiagovictorino\ResourceExporter\Url\Builder;
 use thiagovictorino\ResourceExporter\Url\Parser;
+use thiagovictorino\ResourceExporter\Url\PayloadType;
 
 /**
  * Class ResourceExporter
@@ -81,7 +82,7 @@ class ResourceExporter
    */
   public function withBootstrapThree()
   {
-    $this->builder->setBootstrapThree();
+    $this->builder->setPayload(PayloadType::BOOTSTRAP3);
     return $this;
   }
 
@@ -100,7 +101,7 @@ class ResourceExporter
 
     $this->fileContent = $exporter->export($result);
     $fileName = $this->generateRandomName() . '.csv';
-    Storage::put(
+    Storage::disk(config('resource-exporter.disk'))->put(
       $fileName,
       $this->fileContent);
     return $fileName;

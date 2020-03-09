@@ -148,16 +148,29 @@ class Parser
   {
     $json = json_decode($contents);
 
-    if ($this->builder->isBootstrapThree()) {
+    if ($this->builder->getPayload() == PayloadType::BOOTSTRAP3) {
       return $this->parseBootstrapThreeResult($json);
     }
+
+    if ($this->builder->getPayload() == PayloadType::DEFAULT) {
+      return $this->parseDefaultResult($json);
+    }
+
+    throw new UrlParserException('The payload is not valid: '.$this->builder->getPayload());
+  }
+
+  /**
+   * Parse the default payload result
+   * @param $json
+   * @return string
+   */
+  protected function parseDefaultResult($json) {
 
     $this->result->push($json->data);
 
     if (empty($json->next_page_url)) {
       return '';
     }
-
     return $json->next_page_url . '&' . urldecode(http_build_query($this->builder->getRequest()->except('page')));
   }
 

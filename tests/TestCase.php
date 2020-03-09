@@ -10,54 +10,58 @@ use thiagovictorino\ResourceExporter\ResourceExporterServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+  protected function setUp(): void
+  {
+    parent::setUp();
 
-        $this->setUpDataBase();
+    $this->setUpDataBase();
 
-        $this->app->make(Factory::class)->load(__DIR__ . '/factories');
-    }
+    $this->app->make(Factory::class)->load(__DIR__ . '/factories');
+  }
 
 
-    /**
-     * Get package providers.
-     *
-     * @param  \Illuminate\Foundation\Application  $app
-     *
-     * @return array
-     */
-    protected function getPackageProviders($app)
-    {
-        return [
-          ResourceExporterServiceProvider::class,
-        ];
-    }
+  /**
+   * Get package providers.
+   *
+   * @param \Illuminate\Foundation\Application $app
+   *
+   * @return array
+   */
+  protected function getPackageProviders($app)
+  {
+    return [
+      ResourceExporterServiceProvider::class,
+    ];
+  }
 
-    protected function getEnvironmentSetUp($app)
-    {
-        $app['config']->set('database.default', 'testdb');
-        $app['config']->set('database.connections.testdb', [
-          'driver' => 'sqlite',
-          'database' => ':memory:'
-        ]);
-        $app['config']->set("filesystems.disks");
-      $app['config']->set("filesystems.disks.local",[
-        'driver' => 'local',
-        'root' => storage_path('path'),
-      ]);
-    }
+  protected function getEnvironmentSetUp($app)
+  {
+    $app['config']->set('database.default', 'testdb');
+    $app['config']->set('database.connections.testdb', [
+      'driver' => 'sqlite',
+      'database' => ':memory:'
+    ]);
+    $app['config']->set("filesystems.disks");
+    $app['config']->set("filesystems.disks.local", [
+      'driver' => 'local',
+      'root' => storage_path('path'),
+    ]);
 
-    protected function setUpDataBase(){
-        Schema::create('users', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
-        });
-    }
+    $app['config']->set("resource-exporter.disk", 'local');
+    $app['config']->set("resource-exporter.payload", 'default');
+  }
+
+  protected function setUpDataBase()
+  {
+    Schema::create('users', function (Blueprint $table) {
+      $table->bigIncrements('id');
+      $table->string('name');
+      $table->string('email')->unique();
+      $table->timestamp('email_verified_at')->nullable();
+      $table->string('password');
+      $table->rememberToken();
+      $table->timestamps();
+    });
+  }
 
 }

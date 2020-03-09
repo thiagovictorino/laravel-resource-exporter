@@ -12,9 +12,9 @@ class Builder
 
 
   /**
-   * @var bool
+   * @var string
    */
-  protected $bootstrapThree = false;
+  protected $payload;
 
   /**
    * @var int
@@ -36,6 +36,11 @@ class Builder
    * @var Request
    */
   protected $request;
+
+  public function __construct()
+  {
+    $this->setPayload(config("resource-exporter.payload"));
+  }
 
   /**
    * @param string $endpoint
@@ -78,19 +83,21 @@ class Builder
   }
 
   /**
+   * Set the resource payload type
+   * @param $payload string
    * @return Builder
    */
-  public function setBootstrapThree(): Builder {
-    $this->bootstrapThree = true;
+  public function setPayload(string $payload): Builder {
+    $this->payload = $payload;
     return $this;
   }
 
   /**
-   * @return bool
+   * @return string
    */
-  public function isBootstrapThree(): bool
+  public function getPayload(): string
   {
-    return $this->bootstrapThree;
+    return $this->payload;
   }
 
   /**
@@ -124,8 +131,6 @@ class Builder
   {
     return $this->request;
   }
-
-
 
   /**
    * Create the request with the URL provided

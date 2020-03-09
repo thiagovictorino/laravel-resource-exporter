@@ -10,6 +10,7 @@ use thiagovictorino\ResourceExporter\Exceptions\UrlParserException;
 use thiagovictorino\ResourceExporter\Tests\TestCase;
 use thiagovictorino\ResourceExporter\Url\Builder;
 use thiagovictorino\ResourceExporter\Url\Parser;
+use thiagovictorino\ResourceExporter\Url\PayloadType;
 use function GuzzleHttp\Psr7\stream_for;
 
 class UrlParserTest extends TestCase
@@ -162,7 +163,7 @@ class UrlParserTest extends TestCase
     $urlParser = resolve(Parser::class);
     $builder = resolve(Builder::class);
     $builder->setEndpoint('http://localhost:8082/test?sort=-id&filter[bookable_type]=properties')
-            ->setBootstrapThree();
+            ->setPayLoad(PayloadType::BOOTSTRAP3);
 
     $urlParser->load($builder);
 
@@ -269,10 +270,9 @@ class UrlParserTest extends TestCase
     $this->instance(Client::class, $guzzle);
 
     $urlParser = resolve(Parser::class);
-
     $builder = resolve(Builder::class);
     $builder->setEndpoint('http://localhost:8082/test?sort=-id&filter[bookable_type]=properties')
-      ->setBootstrapThree();
+      ->setPayLoad(PayloadType::BOOTSTRAP3);
 
     $result = $urlParser->load($builder);
 
