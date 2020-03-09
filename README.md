@@ -1,7 +1,5 @@
 ## Usage
 
-You can now add messages using the Facade (when added), using the PSR-3 levels (debug, info, notice, warning, error, critical, alert, emergency):
-
 ```php
 /**
  * Getting the export builder 
@@ -19,7 +17,9 @@ $exporter->withBearerToken('abcd123');
  */ 
 $exporter->withBootstrapThree();
 
-//optional: Add a delay between each requests
+/**
+ * optional: Add a delay between each requests
+ */ 
 $exporter->withDelay(5);
 
 /**
