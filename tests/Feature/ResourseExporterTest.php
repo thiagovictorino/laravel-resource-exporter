@@ -117,8 +117,7 @@ class ResourseExporterTest extends TestCase
      */
     $resourceExporter = resolve(ResourceExporter::class);
 
-    $result = $resourceExporter
-      ->endpoint('http://localhost:8082/test?sort=-id&filter[bookable_type]=properties')
+    $result = $resourceExporter::endpoint('http://localhost:8082/test?sort=-id&filter[bookable_type]=properties')
       ->toCSV();
 
     Storage::disk('local')->assertExists($result);

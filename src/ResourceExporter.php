@@ -20,7 +20,7 @@ class ResourceExporter
    * Object that contains all request information
    * @var $builder Builder
    */
-  protected $builder;
+  static $builder;
 
   /**
    * ResourceExporter constructor.
@@ -28,17 +28,23 @@ class ResourceExporter
    */
   public function __construct(Builder $builder)
   {
-    $this->builder = $builder;
+    self::$builder = $builder;
+  }
+
+  static function getBuilderInstance() {
+    if (empty(self::$builder)) {
+      self::$builder = resolve(Builder::class);
+    }
+    return self::$builder;
   }
 
   /**
-   * Set the endpoint where the data will be get
    * @param string $endpoint
    * @return Builder
    * @throws Exceptions\UrlParserException
    */
-  public function endpoint(string $endpoint): Builder
+  static function endpoint(string $endpoint): Builder
   {
-    return $this->builder->setEndpoint($endpoint);
+    return self::getBuilderInstance()->setEndpoint($endpoint);
   }
 }
