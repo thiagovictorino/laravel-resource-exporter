@@ -5,6 +5,8 @@ namespace thiagovictorino\ResourceExporter;
 
 use Illuminate\Support\Facades\Storage;
 use thiagovictorino\ResourceExporter\Exporters\CommaSeparatedValues;
+use thiagovictorino\ResourceExporter\Url\Builder;
+use thiagovictorino\ResourceExporter\Url\Parser;
 
 /**
  * Class ResourceExporter
@@ -13,7 +15,7 @@ use thiagovictorino\ResourceExporter\Exporters\CommaSeparatedValues;
 class ResourceExporter
 {
   /**
-   * @var UrlParser
+   * @var Parser
    */
   protected $urlParser;
 
@@ -23,22 +25,31 @@ class ResourceExporter
   protected $fileContent;
 
   /**
-   * ResourceExporter constructor.
+   * Object that contains all request information
+   * @var $builder Builder
    */
-  public function __construct()
+  protected $builder;
+
+  /**
+   * ResourceExporter constructor.
+   * @param Parser $parser
+   * @param Builder $builder
+   */
+  public function __construct(Parser $parser, Builder $builder)
   {
-    $this->urlParser = resolve(UrlParser::class);
+    $this->urlParser = $parser;
+    $this->builder = $builder;
   }
 
   /**
    * Set the endpoint where the data will be get
-   * @param string $url
+   * @param string $endpoint
    * @return ResourceExporter
    * @throws Exceptions\UrlParserException
    */
-  public function endpoint(string $url): ResourceExporter
+  public function endpoint(string $endpoint): ResourceExporter
   {
-    $this->urlParser = $this->urlParser->endpoint($url);
+    $this->builder->setEndpoint($endpoint);
     return $this;
   }
 
@@ -49,7 +60,7 @@ class ResourceExporter
    */
   public function withBearerToken(string $token): ResourceExporter
   {
-    $this->urlParser = $this->urlParser->withBearerToken($token);
+    $this->builder->setBearerToken($token);
     return $this;
   }
 
@@ -60,7 +71,7 @@ class ResourceExporter
    */
   public function withDelay(int $seconds): ResourceExporter
   {
-    $this->urlParser = $this->withDelay($seconds);
+    $this->builder->setDelay($seconds);
     return $this;
   }
 
@@ -70,17 +81,18 @@ class ResourceExporter
    */
   public function withBootstrapThree()
   {
-    $this->urlParser = $this->withBootstrapThree();
+    $this->builder->setBootstrapThree();
     return $this;
   }
 
   /**
    * Export to CSV and save in file
    * @return string Name of the file saved
+   * @throws Exceptions\UrlParserException
    */
   public function toCSV()
   {
-    $result = $this->urlParser->load();
+    $result = $this->urlParser->load($this->builder);
     /**
      * @var $exporter CommaSeparatedValues
      */

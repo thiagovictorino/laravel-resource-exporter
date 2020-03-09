@@ -1,6 +1,6 @@
 <?php
 
-namespace thiagovictorino\ResourceExporter;
+namespace thiagovictorino\ResourceExporter\Url;
 
 
 use GuzzleHttp\Client;
@@ -10,21 +10,11 @@ use thiagovictorino\ResourceExporter\Exceptions\UrlParserException;
 use function GuzzleHttp\Psr7\str;
 
 /**
- * Class UrlParser
+ * Class Parser
  * @package thiagovictorino\ResourceExporter
  */
-class UrlParser
+class Parser
 {
-  /**
-   * The endpoint of where the data will be get
-   * @var $url string
-   */
-  protected $url;
-
-  /**
-   * @var $bearerToken string?
-   */
-  protected $bearerToken;
 
   /**
    * @var $httpClient Client
@@ -32,110 +22,44 @@ class UrlParser
   protected $httpClient;
 
   /**
-   * @var int
-   */
-  protected $delay = 0;
-
-  /**
-   * @var bool
-   */
-  protected $bootstrapThree = false;
-
-  /**
-   * @var Request
-   */
-  protected $request;
-
-  /**
    * @var \Illuminate\Support\Collection
    */
   protected $result;
 
   /**
-   * UrlParser constructor.
+   * @var $builder Builder
    */
-  public function __construct()
+  protected $builder;
+
+  /**
+   * The current URL requested
+   * @var $url string
+   */
+  protected $url;
+
+  /**
+   * Parser constructor.
+   * @param Client $client
+   */
+  public function __construct(Client $client)
   {
-    $this->httpClient = resolve(Client::class);
+    $this->httpClient = $client;
     $this->result = collect();
   }
 
-  /**
-   * @param string $url
-   * @return UrlParser
-   * @throws UrlParserException
-   */
-  public function endpoint(string $url): UrlParser
-  {
-
-    if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-      throw new UrlParserException('The url ' . $url . ' is invalid');
-    }
-
-    $this->url = $url;
-
-    $this->createRequest();
-
-    return $this;
-  }
-
-  /**
-   * Create the request with the URL provided
-   * It is used on loop thru the pages
-   */
-  protected function createRequest()
-  {
-    $url_components = parse_url($this->url);
-    parse_str($url_components['query'], $query);
-    $this->request = Request::create($this->url, 'GET', $query);
-  }
-
-  /**
-   * Set the bearear token on request
-   * @param string $token
-   * @return UrlParser
-   */
-  public function withBearerToken(string $token): UrlParser
-  {
-
-    $this->bearerToken = $token;
-
-    return $this;
-  }
-
-  /**
-   * Set the content as a bootstrap 3 standard
-   * @return UrlParser
-   */
-  public function withBootstrapThree(): UrlParser
-  {
-    $this->bootstrapThree = true;
-    return $this;
-  }
-
-  /**
-   * Set a delay between each page request
-   * @param int $seconds
-   * @return UrlParser
-   */
-  public function withDelay(int $seconds): UrlParser
-  {
-    $this->delay = $seconds;
-    return $this;
-  }
 
   /**
    * Makes the request itself and create the results
+   * @param Builder $builder
    * @return iterable
    * @throws UrlParserException
    */
-  public function load(): iterable
+  public function load(Builder $builder): iterable
   {
-
+    $this->builder = $builder;
+    $this->url = $this->builder->getEndpoint();
     $this->validateBeforeLoad();
-
     $this->sendRequest();
-
     return $this->result;
   }
 
@@ -155,7 +79,7 @@ class UrlParser
 
       if (!empty($next_url)) {
         $this->url = $next_url;
-        sleep($this->delay);
+        sleep($this->builder->getDelay());
         $this->sendRequest();
       }
 
@@ -197,7 +121,7 @@ class UrlParser
   {
 
     if (!empty($this->bearerToken)) {
-      return ['Authorization' => 'Bearer ' . $this->bearerToken];
+      return ['Authorization' => 'Bearer ' . $this->builder->getBearerToken()];
     }
 
     return [];
@@ -224,7 +148,7 @@ class UrlParser
   {
     $json = json_decode($contents);
 
-    if ($this->bootstrapThree) {
+    if ($this->builder->isBootstrapThree()) {
       return $this->parseBootstrapThreeResult($json);
     }
 
@@ -234,7 +158,7 @@ class UrlParser
       return '';
     }
 
-    return $json->next_page_url . '&' . urldecode(http_build_query($this->request->except('page')));
+    return $json->next_page_url . '&' . urldecode(http_build_query($this->builder->getRequest()->except('page')));
   }
 
   /**
@@ -256,6 +180,6 @@ class UrlParser
       return '';
     }
 
-    return $json->meta->pagination->links->next . '&' . urldecode(http_build_query($this->request->except('page')));
+    return $json->meta->pagination->links->next . '&' . urldecode(http_build_query($this->builder->getRequest()->except('page')));
   }
 }
