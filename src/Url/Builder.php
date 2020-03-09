@@ -6,6 +6,7 @@ namespace thiagovictorino\ResourceExporter\Url;
 
 use Illuminate\Http\Request;
 use thiagovictorino\ResourceExporter\Exceptions\UrlParserException;
+use thiagovictorino\ResourceExporter\Exporters\Exporter;
 
 class Builder
 {
@@ -37,14 +38,27 @@ class Builder
    */
   protected $request;
 
-  public function __construct()
+  /**
+   * Builder constructor.
+   * @param Parser $parser
+   */
+  protected $parser;
+
+  /**
+   * @var $exporter Exporter
+   */
+  protected $exporter;
+
+  public function __construct(Parser $parser, Exporter $exporter)
   {
-    $this->setPayload(config("resource-exporter.payload"));
+    $this->withPayload(config("resource-exporter.payload"));
+    $this->parser = $parser;
+    $this->exporter = $exporter;
   }
 
   /**
    * @param string $endpoint
-   * @return Parser
+   * @return Builder
    * @throws UrlParserException
    */
   public function setEndpoint(string $endpoint): Builder
@@ -65,7 +79,7 @@ class Builder
    * @param string $token
    * @return Builder
    */
-  public function setBearerToken(string $token): Builder
+  public function withBearerToken(string $token): Builder
   {
     $this->bearerToken = $token;
     return $this;
@@ -76,7 +90,7 @@ class Builder
    * @param int $seconds
    * @return Builder
    */
-  public function setDelay(int $seconds): Builder
+  public function withDelay(int $seconds): Builder
   {
     $this->delay = $seconds;
     return $this;
@@ -87,8 +101,17 @@ class Builder
    * @param $payload string
    * @return Builder
    */
-  public function setPayload(string $payload): Builder {
+  public function withPayload(string $payload): Builder {
     $this->payload = $payload;
+    return $this;
+  }
+
+  /**
+   * Set the resource payload type to Bootstrap3
+   * @return Builder
+   */
+  public function withBootstrapThree(): Builder {
+    $this->payload = PayloadType::BOOTSTRAP3;
     return $this;
   }
 
@@ -133,7 +156,16 @@ class Builder
   }
 
   /**
-   * Create the request with the URL provided
+   * @param string|null $fileName The name of file
+   * @return string
+   * @throws UrlParserException
+   */
+  public function toCSV(?string $fileName = null) {
+    return $this->exporter->getCSV($this, $fileName);
+  }
+
+  /**
+   * Creates the request with the URL provided
    * It is used on loop thru the pages
    */
   protected function createRequest()
