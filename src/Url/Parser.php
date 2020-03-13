@@ -156,7 +156,7 @@ class Parser
       return $this->parseDefaultResult($json);
     }
 
-    throw new UrlParserException('The payload is not valid: '.$this->builder->getPayload());
+    throw new UrlParserException('The payload is not valid: ' . $this->builder->getPayload());
   }
 
   /**
@@ -164,7 +164,8 @@ class Parser
    * @param $json
    * @return string
    */
-  protected function parseDefaultResult($json) {
+  protected function parseDefaultResult($json)
+  {
 
     $this->result->push($json->data);
 

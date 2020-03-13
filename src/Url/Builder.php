@@ -101,7 +101,8 @@ class Builder
    * @param $payload string
    * @return Builder
    */
-  public function withPayload(string $payload): Builder {
+  public function withPayload(string $payload): Builder
+  {
     $this->payload = $payload;
     return $this;
   }
@@ -110,7 +111,8 @@ class Builder
    * Set the resource payload type to Bootstrap3
    * @return Builder
    */
-  public function withBootstrapThree(): Builder {
+  public function withBootstrapThree(): Builder
+  {
     $this->payload = PayloadType::BOOTSTRAP3;
     return $this;
   }
@@ -160,7 +162,8 @@ class Builder
    * @return string
    * @throws UrlParserException
    */
-  public function toCSV(?string $fileName = null) {
+  public function toCSV(?string $fileName = null)
+  {
     return $this->exporter->getCSV($this, $fileName);
   }
 

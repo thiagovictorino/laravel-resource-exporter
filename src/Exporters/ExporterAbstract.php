@@ -14,7 +14,8 @@ abstract class ExporterAbstract implements ExporterInterface
    * @param \stdClass $data
    * @return array Columns name as array
    */
-  protected function getColumnsName(\stdClass $data) {
+  protected function getColumnsName(\stdClass $data)
+  {
     return array_keys(get_object_vars($data));
   }
 
@@ -23,7 +24,8 @@ abstract class ExporterAbstract implements ExporterInterface
    * @param \stdClass $data
    * @return array Values as array
    */
-  protected function getColumnsValue(\stdClass $data) {
+  protected function getColumnsValue(\stdClass $data)
+  {
     return array_values(get_object_vars($data));
   }
 }
