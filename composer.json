@@ -1,12 +1,20 @@
 {
     "name": "thiagovictorino/laravel-resource-exporter",
-    "description": "A ServiceProvider that helps you to export a data resource from an api that returns a standards Laravel pagination",
+    "description": "A ServiceProvider that helps you to export a data resource from an api that returns a Laravel pagination payload",
     "license": "MIT",
+    "type": "library",
     "authors": [
         {
             "name": "Thiago Victorino",
             "email": "eu@thiagovictorino.com"
         }
+    ],
+    "keywords": [
+        "thiago victorino",
+        "Laravel",
+        "CSV",
+        "laravel resource exporter",
+        "laravel export pagination"
     ],
     "prefer-stable": true,
     "minimum-stability": "dev",
@@ -15,7 +23,8 @@
         "guzzlehttp/guzzle": "~6.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^4.6"
+        "orchestra/testbench": "^4.6",
+        "phpunit/phpunit": "^9.0"
     },
     "autoload": {
         "psr-4": {
@@ -26,6 +35,14 @@
         "psr-4": {
             "Victorino\\ResourceExporter\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
     },
     "extra": {
         "laravel": {
