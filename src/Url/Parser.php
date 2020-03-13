@@ -1,17 +1,17 @@
 <?php
 
-namespace thiagovictorino\ResourceExporter\Url;
+namespace Victorino\ResourceExporter\Url;
 
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Request;
-use thiagovictorino\ResourceExporter\Exceptions\UrlParserException;
+use Victorino\ResourceExporter\Exceptions\UrlParserException;
 use function GuzzleHttp\Psr7\str;
 
 /**
  * Class Parser
- * @package thiagovictorino\ResourceExporter
+ * @package Victorino\ResourceExporter
  */
 class Parser
 {

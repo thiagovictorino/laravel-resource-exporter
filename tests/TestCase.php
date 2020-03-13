@@ -1,12 +1,12 @@
 <?php
 
 
-namespace thiagovictorino\ResourceExporter\Tests;
+namespace Victorino\ResourceExporter\Tests;
 
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use thiagovictorino\ResourceExporter\ResourceExporterServiceProvider;
+use Victorino\ResourceExporter\ResourceExporterServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -34,8 +34,16 @@ class TestCase extends \Orchestra\Testbench\TestCase
     ];
   }
 
+  protected function getPackageAliases($app)
+  {
+    return [
+      'ResourceExporter' => \Victorino\ResourceExporter\Facades\ResourceExporter::class
+    ];
+  }
+
   protected function getEnvironmentSetUp($app)
   {
+
     $app['config']->set('database.default', 'testdb');
     $app['config']->set('database.connections.testdb', [
       'driver' => 'sqlite',

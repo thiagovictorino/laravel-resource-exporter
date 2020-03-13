@@ -3,10 +3,12 @@
 You can now add messages using the Facade (when added), using the PSR-3 levels (debug, info, notice, warning, error, critical, alert, emergency):
 
 ```php
+
+use  \Victorino\ResourceExporter\ResourceExporter;
 /**
  * Getting the export builder 
  */
-$exporter = \thiagovictorino\ResourceExporter\ResourceExporter::endpoint('http://you-url.com?anyfilters');
+$exporter =ResourceExporter::endpoint('http://you-url.com?anyfilters');
 
 /**
  * optional: Set the Bearer Token on request

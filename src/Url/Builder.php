@@ -1,12 +1,12 @@
 <?php
 
 
-namespace thiagovictorino\ResourceExporter\Url;
+namespace Victorino\ResourceExporter\Url;
 
 
 use Illuminate\Http\Request;
-use thiagovictorino\ResourceExporter\Exceptions\UrlParserException;
-use thiagovictorino\ResourceExporter\Exporters\Exporter;
+use Victorino\ResourceExporter\Exceptions\UrlParserException;
+use Victorino\ResourceExporter\Exporters\Exporter;
 
 class Builder
 {

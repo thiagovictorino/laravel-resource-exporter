@@ -1,7 +1,7 @@
 <?php
 
 
-namespace thiagovictorino\ResourceExporter\Exporters;
+namespace Victorino\ResourceExporter\Exporters;
 
 
 interface ExporterInterface

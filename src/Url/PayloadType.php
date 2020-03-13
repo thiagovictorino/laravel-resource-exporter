@@ -1,7 +1,7 @@
 <?php
 
 
-namespace thiagovictorino\ResourceExporter\Url;
+namespace Victorino\ResourceExporter\Url;
 
 abstract class PayloadType {
   const DEFAULT = 'default';

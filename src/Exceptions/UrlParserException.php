@@ -1,7 +1,7 @@
 <?php
 
 
-namespace thiagovictorino\ResourceExporter\Exceptions;
+namespace Victorino\ResourceExporter\Exceptions;
 
 
 class UrlParserException extends \Exception

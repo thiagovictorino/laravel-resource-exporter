@@ -1,11 +1,11 @@
 <?php
 
 
-namespace thiagovictorino\ResourceExporter\Exporters;
+namespace Victorino\ResourceExporter\Exporters;
 
 /**
  * Class ExporterAbstract
- * @package thiagovictorino\ResourceExporter\Exporters
+ * @package Victorino\ResourceExporter\Exporters
  */
 abstract class ExporterAbstract implements ExporterInterface
 {

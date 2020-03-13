@@ -1,10 +1,10 @@
 <?php
 
-namespace thiagovictorino\ResourceExporter\Exporters;
+namespace Victorino\ResourceExporter\Exporters;
 
 /**
  * Class CommaSeparatedValues
- * @package thiagovictorino\ResourceExporter\Exporters
+ * @package Victorino\ResourceExporter\Exporters
  */
 class CommaSeparatedValues extends ExporterAbstract
 {

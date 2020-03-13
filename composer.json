@@ -19,19 +19,22 @@
     },
     "autoload": {
         "psr-4": {
-            "thiagovictorino\\ResourceExporter\\": "src/"
+            "Victorino\\ResourceExporter\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "thiagovictorino\\ResourceExporter\\Tests\\": "tests/"
+            "Victorino\\ResourceExporter\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "thiagovictorino\\ResourceExporter\\ResourceExporterServiceProvider"
-            ]
+                "Victorino\\ResourceExporter\\ResourceExporterServiceProvider"
+            ],
+            "aliases": {
+                "ResourceExporter": "Victorino\\ResourceExporter\\Facades\\ResourceExporter"
+            }
         }
     }
 }

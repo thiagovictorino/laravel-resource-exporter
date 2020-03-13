@@ -1,13 +1,13 @@
 <?php
 
-namespace thiagovictorino\ResourceExporter\Tests\Feature;
+namespace Victorino\ResourceExporter\Tests\Feature;
 
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Storage;
-use thiagovictorino\ResourceExporter\ResourceExporter;
-use thiagovictorino\ResourceExporter\Tests\TestCase;
+use Victorino\ResourceExporter\ResourceExporter;
+use Victorino\ResourceExporter\Tests\TestCase;
 
 class ResourseExporterTest extends TestCase
 {
@@ -115,9 +115,8 @@ class ResourseExporterTest extends TestCase
     /**
      * @var $resourceExporter ResourceExporter
      */
-    $resourceExporter = resolve(ResourceExporter::class);
 
-    $result = $resourceExporter::endpoint('http://localhost:8082/test?sort=-id&filter[bookable_type]=properties')
+    $result = \ResourceExporter::endpoint('http://localhost:8082/test?sort=-id&filter[bookable_type]=properties')
       ->toCSV();
 
     Storage::disk('local')->assertExists($result);

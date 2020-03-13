@@ -1,6 +1,6 @@
 <?php
 
-namespace thiagovictorino\ResourceExporter;
+namespace Victorino\ResourceExporter;
 
 
 use Illuminate\Support\ServiceProvider;
@@ -8,7 +8,7 @@ use Illuminate\Support\ServiceProvider;
 /**
  * Class ResourceExporterServiceProvider
  *
- * @package thiagovictorino\ResourceExporter
+ * @package Victorino\ResourceExporter
  */
 class ResourceExporterServiceProvider extends ServiceProvider
 {
@@ -21,7 +21,12 @@ class ResourceExporterServiceProvider extends ServiceProvider
     private function registerResources()
     {
       $this->publishes([
-        __DIR__ . '../config/resource-exporter.php' => config_path('resource-exporter.php'),
+        __DIR__ . '../config/resource-exporter.php' => config_path('resource-exporter'),
       ]);
     }
+
+  public function register()
+  {
+      $this->app->singleton(ResourceExporter::class);
+  }
 }

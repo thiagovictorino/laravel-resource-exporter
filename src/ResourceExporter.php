@@ -1,17 +1,17 @@
 <?php
 
-namespace thiagovictorino\ResourceExporter;
+namespace Victorino\ResourceExporter;
 
 
 use Illuminate\Support\Facades\Storage;
-use thiagovictorino\ResourceExporter\Exporters\CommaSeparatedValues;
-use thiagovictorino\ResourceExporter\Url\Builder;
-use thiagovictorino\ResourceExporter\Url\Parser;
-use thiagovictorino\ResourceExporter\Url\PayloadType;
+use Victorino\ResourceExporter\Exporters\CommaSeparatedValues;
+use Victorino\ResourceExporter\Url\Builder;
+use Victorino\ResourceExporter\Url\Parser;
+use Victorino\ResourceExporter\Url\PayloadType;
 
 /**
  * Class ResourceExporter
- * @package thiagovictorino\ResourceExporter
+ * @package Victorino\ResourceExporter
  */
 class ResourceExporter
 {
@@ -20,7 +20,7 @@ class ResourceExporter
    * Object that contains all request information
    * @var $builder Builder
    */
-  static $builder;
+  protected $builder;
 
   /**
    * ResourceExporter constructor.
@@ -28,14 +28,7 @@ class ResourceExporter
    */
   public function __construct(Builder $builder)
   {
-    self::$builder = $builder;
-  }
-
-  static function getBuilderInstance() {
-    if (empty(self::$builder)) {
-      self::$builder = resolve(Builder::class);
-    }
-    return self::$builder;
+    $this->builder = $builder;
   }
 
   /**
@@ -43,8 +36,8 @@ class ResourceExporter
    * @return Builder
    * @throws Exceptions\UrlParserException
    */
-  static function endpoint(string $endpoint): Builder
+  public function endpoint(string $endpoint): Builder
   {
-    return self::getBuilderInstance()->setEndpoint($endpoint);
+    return $this->builder->setEndpoint($endpoint);
   }
 }

@@ -1,16 +1,16 @@
 <?php
 
 
-namespace thiagovictorino\ResourceExporter\Tests\Feature;
+namespace Victorino\ResourceExporter\Tests\Feature;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Auth\User;
-use thiagovictorino\ResourceExporter\Exceptions\UrlParserException;
-use thiagovictorino\ResourceExporter\Tests\TestCase;
-use thiagovictorino\ResourceExporter\Url\Builder;
-use thiagovictorino\ResourceExporter\Url\Parser;
-use thiagovictorino\ResourceExporter\Url\PayloadType;
+use Victorino\ResourceExporter\Exceptions\UrlParserException;
+use Victorino\ResourceExporter\Tests\TestCase;
+use Victorino\ResourceExporter\Url\Builder;
+use Victorino\ResourceExporter\Url\Parser;
+use Victorino\ResourceExporter\Url\PayloadType;
 use function GuzzleHttp\Psr7\stream_for;
 
 class UrlParserTest extends TestCase

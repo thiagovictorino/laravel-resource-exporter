@@ -1,13 +1,13 @@
 <?php
 
 
-namespace thiagovictorino\ResourceExporter\Exporters;
+namespace Victorino\ResourceExporter\Exporters;
 
 
 use Illuminate\Support\Facades\Storage;
-use thiagovictorino\ResourceExporter\Exceptions\UrlParserException;
-use thiagovictorino\ResourceExporter\Url\Builder;
-use thiagovictorino\ResourceExporter\Url\Parser;
+use Victorino\ResourceExporter\Exceptions\UrlParserException;
+use Victorino\ResourceExporter\Url\Builder;
+use Victorino\ResourceExporter\Url\Parser;
 
 class Exporter
 {
