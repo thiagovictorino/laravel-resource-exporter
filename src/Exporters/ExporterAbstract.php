@@ -22,10 +22,30 @@ abstract class ExporterAbstract implements ExporterInterface
   /**
    * Get the column values of the object
    * @param \stdClass $data
-   * @return array Values as array
+   * @return void
    */
   protected function getColumnsValue(\stdClass $data)
   {
-    return array_values(get_object_vars($data));
+    return $this->sanitalize(array_values(get_object_vars($data)));
+
   }
+
+  /**
+   * Sanitalize data to prevent inside array
+   * @param $data
+   */
+  protected function sanitalize($data)
+  {
+    $sanitalizedData = [];
+    foreach ($data as $item) {
+      if (is_array($item)) {
+        $sanitalizedData[] = json_encode($item);
+        continue;
+      }
+
+      $sanitalizedData[] = $item;
+    }
+    return $sanitalizedData;
+  }
+
 }

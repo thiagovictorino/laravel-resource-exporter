@@ -30,7 +30,7 @@ class CommaSeparatedValues extends ExporterAbstract
 
     // CSV Data
     foreach ($resources as $row) {
-      fputcsv($fh, $this->getColumnsValue($row));
+      fputcsv($fh, (array)$this->getColumnsValue($row));
     }
 
     // Get the contents of the output buffer

@@ -71,6 +71,7 @@ class Parser
   {
     try {
 
+      //dd($this->setHeaders());
       $response = $this->httpClient->request('GET', $this->url, [
         'headers' => $this->setHeaders()
       ]);
@@ -119,9 +120,8 @@ class Parser
    */
   protected function setAuthHeaders(): array
   {
-
-    if (!empty($this->bearerToken)) {
-      return ['Authorization' => 'Bearer ' . $this->builder->getBearerToken()];
+    if (!empty($this->builder->getBearerToken())) {
+      return ['authorization' => 'Bearer ' . $this->builder->getBearerToken()];
     }
 
     return [];
