@@ -21,7 +21,8 @@ class ResourceExporterServiceProvider extends ServiceProvider
   private function registerResources()
   {
     $this->publishes([
-      __DIR__ . '../config/resource-exporter.php' => config_path('resource-exporter.php'),
+      __DIR__ . '/../config/resource-exporter.php' => config_path('resource-exporter.php'),
+      'resource-exporter-config'
     ]);
   }
 
