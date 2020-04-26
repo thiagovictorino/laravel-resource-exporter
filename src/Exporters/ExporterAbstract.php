@@ -38,7 +38,7 @@ abstract class ExporterAbstract implements ExporterInterface
   {
     $sanitalizedData = [];
     foreach ($data as $item) {
-      if (is_array($item)) {
+      if (is_array($item) || is_object($item)) {
         $sanitalizedData[] = json_encode($item);
         continue;
       }
