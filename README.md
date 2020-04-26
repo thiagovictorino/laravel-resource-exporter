@@ -27,7 +27,7 @@ php artisan vendor:publish --provider="Victorino\ResourceExporter\ResourceExport
  * Getting the export builder 
  */
 
-$exporter = \ResourceExporter::endpoint('http://you-url.com/resource?anyfilters');
+$exporter = \ResourceExporter::endpoint('http://yourl.com/resource?anyfilters');
 
 
 /**
