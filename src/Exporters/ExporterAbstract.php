@@ -11,41 +11,90 @@ abstract class ExporterAbstract implements ExporterInterface
 {
   /**
    * Get the column names of a object
-   * @param \stdClass $data
+   * @param array $resource
    * @return array Columns name as array
    */
-  protected function getColumnsName(\stdClass $data)
-  {
-    return array_keys(get_object_vars($data));
+  protected function getColumnsName(array $resource): array {
+    $columns = [];
+    foreach ($resource as $row) {
+      $columns[] = $row['column'];
+    }
+    return $columns;
   }
 
   /**
-   * Get the column values of the object
-   * @param \stdClass $data
-   * @return void
+   * Get the column values of a object
+   * @param array $resource
+   * @return array Columns name as array
    */
-  protected function getColumnsValue(\stdClass $data)
-  {
-    return $this->sanitalize(array_values(get_object_vars($data)));
-
+  protected function getColumnsValue(array $resource): array {
+    $columns = [];
+    foreach ($resource as $row) {
+      $columns[] = $row['value'];
+    }
+    return $columns;
   }
 
   /**
-   * Sanitalize data to prevent inside array
-   * @param $data
+   * @param $dataSource
+   * @param string $prefix
+   * @return array
    */
-  protected function sanitalize($data)
+  protected function getResourceValues($dataSource, $prefix = "")
   {
-    $sanitalizedData = [];
-    foreach ($data as $item) {
-      if (is_array($item) || is_object($item)) {
-        $sanitalizedData[] = json_encode($item);
+
+    if (is_object($dataSource)) {
+      return $this->getResourceValuesFromObject($dataSource, $prefix);
+    }
+
+    if (is_array($dataSource)) {
+      return $this->getResourceValuesFromArray($dataSource, $prefix);
+    }
+
+    return [];
+  }
+
+  /**
+   * @param \stdClass $dataSource
+   * @param string $prefix
+   * @return array
+   */
+  protected function getResourceValuesFromObject(\stdClass $dataSource, string $prefix) {
+    $attributes = array_keys(get_object_vars($dataSource));
+    $columns = [];
+
+    foreach ($attributes as $attribute) {
+      $value = $dataSource->$attribute;
+      if(is_object($value) || is_array($value)){
+        $columns = array_merge($columns, $this->getResourceValues($value, $prefix.$attribute.'.'));
         continue;
       }
-
-      $sanitalizedData[] = $item;
+      $columns[] = [
+          'column' => $prefix.$attribute,
+          'value' => $value
+      ];
     }
-    return $sanitalizedData;
+    return $columns;
+  }
+
+  /**
+   * @param array $dataSource
+   * @param string $prefix
+   * @return array
+   */
+  protected function getResourceValuesFromArray(array $dataSource, string $prefix) {
+    $columns = [];
+    foreach ($dataSource as $index => $value) {
+      if(is_object($value) || is_array($value)){
+        $columns = array_merge($columns, $this->getResourceValues($value, $prefix.$index.'.'));
+        continue;
+      }
+      $columns[] = [
+        'column' => $prefix.$index,
+        'value' => $value
+      ];
+    }
+    return $columns;
   }
 
 }

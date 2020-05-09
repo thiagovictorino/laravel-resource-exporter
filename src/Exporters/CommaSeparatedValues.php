@@ -16,25 +16,45 @@ class CommaSeparatedValues extends ExporterAbstract
   public function export(iterable $collection)
   {
     $resources = $this->normalizeData($collection);
-    $columns = $this->getColumnsName($resources->first());
-    // Open the output stream
+    $flatted_resources = $this->flattenData($resources);
+    $columns = $this->getColumnsName($flatted_resources->first());
+
     $fh = fopen('php://output', 'w');
 
-    // Start output buffering (to capture stream contents)
     ob_start();
 
-    // CSV Header
+    /**
+     * CSV columns name
+     */
     if (is_array($columns)) {
       fputcsv($fh, $columns);
     }
 
-    // CSV Data
-    foreach ($resources as $row) {
+    /**
+     * CSV values
+     */
+    foreach ($flatted_resources as $row) {
       fputcsv($fh, (array)$this->getColumnsValue($row));
     }
 
-    // Get the contents of the output buffer
     return ob_get_clean();
+  }
+
+  /**
+   * Flatten the resource data by going deeply into results
+   * @param iterable $resources
+   * @return \Illuminate\Support\Collection
+   */
+  protected function flattenData(iterable $resources)
+  {
+    $flatted = collect();
+    if (empty($resources)) {
+      return $flatted;
+    }
+    foreach ($resources as $item) {
+      $flatted->push($this->getResourceValues($item));
+    }
+    return $flatted;
   }
 
   /**
