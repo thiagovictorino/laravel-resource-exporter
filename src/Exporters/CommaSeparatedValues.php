@@ -17,7 +17,7 @@ class CommaSeparatedValues extends ExporterAbstract
   {
     $resources = $this->normalizeData($collection);
     $flatted_resources = $this->flattenData($resources);
-    $columns = $this->getColumnsName($flatted_resources->first());
+    $columns = $this->getColumnsName($flatted_resources);
 
     $fh = fopen('php://output', 'w');
 
