@@ -11,14 +11,19 @@ abstract class ExporterAbstract implements ExporterInterface
 {
   /**
    * Get the column names of a object
-   * @param array $resource
+   * @param array $resources
    * @return array Columns name as array
    */
-  protected function getColumnsName(array $resource): array {
+  protected function getColumnsName(iterable $resources): array {
     $columns = [];
-    foreach ($resource as $row) {
-      $columns[] = $row['column'];
+    foreach ($resources as $resource) {
+      foreach ($resource as $row) {
+        if(!in_array($row['column'], $columns)) {
+          $columns[] = $row['column'];
+        }
+      }
     }
+
     return $columns;
   }
 
