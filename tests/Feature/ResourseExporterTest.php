@@ -2,7 +2,6 @@
 
 namespace Victorino\ResourceExporter\Tests\Feature;
 
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Storage;
@@ -11,19 +10,18 @@ use Victorino\ResourceExporter\Tests\TestCase;
 
 class ResourseExporterTest extends TestCase
 {
-
-  protected function mockAPIResponse()
-  {
-    $guzzle = \Mockery::mock(Client::class);
-    $guzzle->shouldReceive('request')->withArgs([
-      'GET',
-      "http://localhost:8082/test?sort=-id&filter[bookable_type]=properties",
-      [
-        'headers' => [
-          'Accept' => 'application/json'
-        ]
-      ]
-    ])->once()->andReturn(
+    protected function mockAPIResponse()
+    {
+        $guzzle = \Mockery::mock(Client::class);
+        $guzzle->shouldReceive('request')->withArgs([
+            'GET',
+            'http://localhost:8082/test?sort=-id&filter[bookable_type]=properties',
+            [
+                'headers' => [
+                    'Accept' => 'application/json',
+                ],
+            ],
+        ])->once()->andReturn(
       new Response(
         200,
         [],
@@ -58,15 +56,15 @@ class ResourseExporterTest extends TestCase
       )
     );
 
-    $guzzle->shouldReceive('request')->withArgs([
-      'GET',
-      'http://localhost:8082/test?page=2&sort=-id&filter[bookable_type]=properties',
-      [
-        'headers' => [
-          'Accept' => 'application/json'
-        ]
-      ]
-    ])->once()->andReturn(
+        $guzzle->shouldReceive('request')->withArgs([
+            'GET',
+            'http://localhost:8082/test?page=2&sort=-id&filter[bookable_type]=properties',
+            [
+                'headers' => [
+                    'Accept' => 'application/json',
+                ],
+            ],
+        ])->once()->andReturn(
       new Response(
         200,
         [],
@@ -99,27 +97,24 @@ class ResourseExporterTest extends TestCase
                       "total": 2
                     }'));
 
-    $this->instance(Client::class, $guzzle);
-
-  }
-
-  /**
-   * @test
-   */
-  public function it_will_create_a_csv_file()
-  {
-    $this->mockAPIResponse();
-
-    Storage::fake('local');
+        $this->instance(Client::class, $guzzle);
+    }
 
     /**
-     * @var $resourceExporter ResourceExporter
+     * @test
      */
+    public function it_will_create_a_csv_file()
+    {
+        $this->mockAPIResponse();
 
-    $result = \ResourceExporter::endpoint('http://localhost:8082/test?sort=-id&filter[bookable_type]=properties')
+        Storage::fake('local');
+
+        /**
+         * @var $resourceExporter ResourceExporter
+         */
+        $result = \ResourceExporter::endpoint('http://localhost:8082/test?sort=-id&filter[bookable_type]=properties')
       ->toCSV();
 
-    Storage::disk('local')->assertExists($result);
-
-  }
+        Storage::disk('local')->assertExists($result);
+    }
 }

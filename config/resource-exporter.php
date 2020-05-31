@@ -1,7 +1,7 @@
 <?php
 
 return [
-   /*
+    /*
     |--------------------------------------------------------------------------
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
@@ -11,8 +11,8 @@ return [
     | based disks are available to your application. Just store away!
     |
     */
-  'disk' => env('RESOURCE_EXPORTER_DISK', env('FILESYSTEM_DRIVER', 'local')),
-  /*
+    'disk' => env('RESOURCE_EXPORTER_DISK', env('FILESYSTEM_DRIVER', 'local')),
+    /*
     |--------------------------------------------------------------------------
     | Resource Payload
     |--------------------------------------------------------------------------
@@ -23,5 +23,5 @@ return [
     | Supported Payloads: "default", "bootstrap3"
     |
     */
-  'payload' => env('RESOURCE_EXPORTER_PAYLOAD','default')
+    'payload' => env('RESOURCE_EXPORTER_PAYLOAD', 'default'),
 ];
